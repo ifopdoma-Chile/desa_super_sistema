@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="hero-section p-5 mb-4 rounded text-white text-center" style="background: linear-gradient(135deg, #0c2d48 0%, #145da0 50%, #0c7b93 100%);">
+            <h1 class="display-4 fw-bold">&#x1F30A; Humboldt Digital Ocean</h1>
+            <p class="lead">Observatorio digital de la Corriente de Humboldt &mdash; IFOP &middot; DOMA</p>
+            <p class="fs-6">Monitoreo de ENOS, Surgencia Costera, Productividad y Acidificaci&oacute;n Oce&aacute;nica</p>
+            <hr class="my-3" style="border-color: rgba(255,255,255,0.3);">
+            <div class="row justify-content-center">
+                <div class="col-md-3"><i class="bi bi-thermometer-half fs-3"></i><br><small>ENOS</small></div>
+                <div class="col-md-3"><i class="bi bi-wind fs-3"></i><br><small>Surgencia</small></div>
+                <div class="col-md-3"><i class="bi bi-water fs-3"></i><br><small>Humboldt Current</small></div>
+                <div class="col-md-3"><i class="bi bi-droplet fs-3"></i><br><small>Acidificaci&oacute;n</small></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-primary h-100">
+            <div class="card-header bg-primary text-white">&#x1F321; ENOS</div>
+            <div class="card-body" id="card-enos">
+                <p class="text-muted">Cargando datos...</p>
+            </div>
+            <div class="card-footer"><a href="{{ url_for("main.enos") }}" class="btn btn-sm btn-primary">Ver dashboard &#x2192;</a></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-success h-100">
+            <div class="card-header bg-success text-white">&#x1F30A; Surgencia Costera</div>
+            <div class="card-body" id="card-surgencia">
+                <p class="text-muted">Cargando datos...</p>
+            </div>
+            <div class="card-footer"><a href="{{ url_for("main.surgencia") }}" class="btn btn-sm btn-success">Ver dashboard &#x2192;</a></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-info h-100">
+            <div class="card-header bg-info text-white">&#x1F40B; H. Current</div>
+            <div class="card-body" id="card-hcs">
+                <p class="text-muted">Cargando datos...</p>
+            </div>
+            <div class="card-footer"><a href="{{ url_for("main.humboldt") }}" class="btn btn-sm btn-info">Ver dashboard &#x2192;</a></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-warning h-100">
+            <div class="card-header bg-warning">&#x1F514; Alertas</div>
+            <div class="card-body" id="card-alertas">
+                <p class="text-muted">Cargando datos...</p>
+            </div>
+            <div class="card-footer"><a href="{{ url_for("main.alertas") }}" class="btn btn-sm btn-warning">Ver alertas &#x2192;</a></div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">&#x1F4CA; Series Temporales &mdash; &Uacute;ltimos 12 meses</div>
+            <div class="card-body">
+                <div id="dashboard-graph" style="height: 400px;"></div>
+                <p class="text-muted text-center mt-2"><small>Gr&aacute;fico evolutivo de indicadores. Datos hist&oacute;ricos disponibles desde 1980 (NOAA CPC).</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">&#x1F30D; &Aacute;rea de estudio</div>
+            <div class="card-body">
+                <p>La <strong>Corriente de Humboldt</strong> es el sistema de corrientes marinas que fluye hacia el norte a lo largo de la costa occidental de Sudam&eacute;rica, desde el sur de Chile hasta el norte del Per&uacute;.</p>
+                <ul>
+                    <li><strong>Regi&oacute;n:</strong> 18&deg;-56&deg;S, 65&deg;-85&deg;W</li>
+                    <li><strong>&Aacute;rea:</strong> Costa de Chile y Pacifico Suroriental</li>
+                    <li><strong>Fuentes:</strong> Copernicus Marine, NOAA CPC, CMEMS</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">&#x1F4E1; API REST</div>
+            <div class="card-body">
+                <p>Accede a los datos del HDO mediante nuestra API REST p&uacute;blica:</p>
+                <ul>
+                    <li><code>/hdo/api/v1/enos</code> &mdash; Indicadores ENOS</li>
+                    <li><code>/hdo/api/v1/surgencia</code> &mdash; Surgencia Costera</li>
+                    <li><code>/hdo/api/v1/hcs</code> &mdash; Corriente de Humboldt</li>
+                    <li><code>/hdo/api/v1/acidificacion</code> &mdash; Acidificaci&oacute;n</li>
+                    <li><code>/hdo/api/v1/alertas</code> &mdash; Alertas activas</li>
+                </ul>
+                <a href="{{ url_for("main.api_docs") }}" class="btn btn-sm btn-outline-primary">Documentaci&oacute;n completa &#x2192;</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Cargar datos del dashboard
+    fetch("/hdo/api/v1/status")
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("status-badge").textContent = "✅ Sistema operativo";
+            document.getElementById("card-enos").innerHTML = "<p>Datos: " + (data.datos.enos ? "✅ Disponibles" : "❌ No disponibles") + "</p>";
+            document.getElementById("card-surgencia").innerHTML = "<p>Datos: " + (data.datos.surgencia ? "✅ Disponibles" : "❌ No disponibles") + "</p>";
+            document.getElementById("card-hcs").innerHTML = "<p>Datos: " + (data.datos.hcs ? "✅ Disponibles" : "❌ No disponibles") + "</p>";
+            document.getElementById("card-alertas").innerHTML = "<p>Alertas activas: <strong>" + data.datos.alertas_activas + "</strong></p>";
+        })
+        .catch(err => {
+            document.getElementById("status-badge").textContent = "⚠ Sin conexión";
+        });
+
+    // Cargar series temporales
+    fetch("/hdo/api/v1/enos/historico")
+        .then(r => r.json())
+        .then(data => {
+            if (data.data && data.data.length > 0) {
+                var registros = data.data.slice(-24);
+                var fechas = registros.map(d => d.fecha);
+                var oni = registros.map(d => d.oni);
+                var nino34 = registros.map(d => d.nino34);
+
+                var trace1 = { x: fechas, y: oni, type: "scatter", mode: "lines+markers", name: "ONI", line: {color: "#e74c3c"} };
+                var trace2 = { x: fechas, y: nino34, type: "scatter", mode: "lines+markers", name: "Niño 3.4", line: {color: "#3498db"} };
+                var layout = {
+                    title: "Índices ENOS - Serie temporal",
+                    xaxis: {title: "Fecha"},
+                    yaxis: {title: "Anomalía (°C)", zerolinecolor: "#666", zerolinewidth: 1},
+                    hovermode: "x unified",
+                    plot_bgcolor: "#f8f9fa",
+                    margin: {t: 40, b: 40, l: 50, r: 20}
+                };
+                Plotly.newPlot("dashboard-graph", [trace1, trace2], layout, {responsive: true});
+            } else {
+                document.getElementById("dashboard-graph").innerHTML = "<p class=text-center text-muted mt-5>No hay datos disponibles. Ejecute la carga de datos históricos primero.</p>";
+            }
+        })
+        .catch(err => {
+            document.getElementById("dashboard-graph").innerHTML = "<p class=text-center text-muted mt-5>Error al cargar datos: " + err + "</p>";
+        });
+});
+</script>
+{% endblock %}

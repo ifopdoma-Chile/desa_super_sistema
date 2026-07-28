@@ -1,0 +1,247 @@
+/Data2/super_sistema/scripts/etl_runner.sh: line 5: /Data2/super_sistema/venv/bin/activate: No such file or directory
+[dom 26 jul 2026 06:00:01 -04] HDO ETL: Iniciando pipelines...
+[dom 26 jul 2026 06:00:01 -04] 1. Descargando NOAA...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-26 06:00:02,448 [INFO] Iniciando descarga de indices NOAA...
+2026-07-26 06:00:03,330 [INFO] ONI descargado: 917 registros
+2026-07-26 06:00:04,077 [INFO] Nino 3.4 descargado: 918 registros
+2026-07-26 06:00:04,712 [INFO] SOI descargado: 1812 registros
+2026-07-26 06:00:04,730 [INFO] Indices NOAA combinados: 1824 registros
+2026-07-26 06:00:04,731 [INFO] Periodo: 1950-01-01 a 2026-06-01
+2026-07-26 06:00:05,044 [INFO] Insertados 1824 registros en enos_indicadores
+2026-07-26 06:00:05,045 [INFO] Descarga NOAA completada
+[dom 26 jul 2026 06:00:05 -04] 2. Descargando CMEMS...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-26 06:00:05,899 [INFO] === INICIANDO DESCARGA CMEMS ===
+2026-07-26 06:00:05,899 [INFO] Descargando SST...
+INFO - 2026-07-26T10:00:11Z - Selected dataset version: "202003"
+2026-07-26 10:00:11,338 [INFO] Selected dataset version: "202003"
+INFO - 2026-07-26T10:00:11Z - Selected dataset part: "default"
+2026-07-26 10:00:11,338 [INFO] Selected dataset part: "default"
+2026-07-26 10:00:11,339 [ERROR] Error descargando SST CMEMS real: Some of your subset selection [2026-07-19 00:00:00+00:00, 2026-07-26 23:59:59+00:00] for the time dimension exceed the dataset coordinates [1981-10-01 00:00:00+00:00, 2026-03-31 00:00:00+00:00], usando sintéticos
+/home/agarcia/.local/lib/python3.12/site-packages/dask/array/chunk_types.py:131: UserWarning: A NumPy version >=2.0.0 and <2.8.0 is required for this version of SciPy (detected version 1.26.4)
+  import scipy.sparse
+/home/agarcia/.local/lib/python3.12/site-packages/scipy/sparse/_sputils.py:17: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.
+  np.uintc, np.long, np.ulong, np.longlong, np.ulonglong,
+2026-07-26 10:00:12,447 [INFO] SST insertada: 3200 registros
+2026-07-26 10:00:12,448 [INFO] Descargando viento...
+2026-07-26 10:00:13,579 [INFO] Surgencia calculada: 800 registros
+2026-07-26 10:00:13,579 [INFO] Descargando CHL...
+2026-07-26 10:00:17,417 [INFO] CHL insertada: 6975 registros
+2026-07-26 10:00:17,418 [INFO] Descargando BGC...
+2026-07-26 10:00:17,558 [INFO] BGC insertado: 100 registros
+2026-07-26 10:00:17,558 [INFO] === DESCARGA CMEMS COMPLETADA ===
+[dom 26 jul 2026 06:00:17 -04] 3. Calculando indicadores...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-26 06:00:18,357 [INFO] === CALCULANDO INDICADORES ===
+2026-07-26 06:00:18,562 [INFO] HCS calculado: 30 registros
+2026-07-26 06:00:18,567 [INFO] Alertas generadas: 1
+2026-07-26 06:00:18,567 [INFO] === CALCULO COMPLETADO ===
+[dom 26 jul 2026 06:00:18 -04] HDO ETL: Completado.
+/Data2/super_sistema/scripts/etl_runner.sh: line 5: /Data2/super_sistema/venv/bin/activate: No such file or directory
+[dom 26 jul 2026 18:00:01 -04] HDO ETL: Iniciando pipelines...
+[dom 26 jul 2026 18:00:01 -04] 1. Descargando NOAA...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-26 18:00:02,719 [INFO] Iniciando descarga de indices NOAA...
+2026-07-26 18:00:03,600 [INFO] ONI descargado: 917 registros
+2026-07-26 18:00:04,529 [INFO] Nino 3.4 descargado: 918 registros
+2026-07-26 18:00:05,343 [INFO] SOI descargado: 1812 registros
+2026-07-26 18:00:05,361 [INFO] Indices NOAA combinados: 1824 registros
+2026-07-26 18:00:05,363 [INFO] Periodo: 1950-01-01 a 2026-06-01
+2026-07-26 18:00:05,705 [INFO] Insertados 1824 registros en enos_indicadores
+2026-07-26 18:00:05,706 [INFO] Descarga NOAA completada
+[dom 26 jul 2026 18:00:05 -04] 2. Descargando CMEMS...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-26 18:00:06,655 [INFO] === INICIANDO DESCARGA CMEMS ===
+2026-07-26 18:00:06,655 [INFO] Descargando SST...
+INFO - 2026-07-26T22:00:12Z - Selected dataset version: "202003"
+2026-07-26 22:00:12,323 [INFO] Selected dataset version: "202003"
+INFO - 2026-07-26T22:00:12Z - Selected dataset part: "default"
+2026-07-26 22:00:12,324 [INFO] Selected dataset part: "default"
+2026-07-26 22:00:12,325 [ERROR] Error descargando SST CMEMS real: Some of your subset selection [2026-07-19 00:00:00+00:00, 2026-07-26 23:59:59+00:00] for the time dimension exceed the dataset coordinates [1981-10-01 00:00:00+00:00, 2026-03-31 00:00:00+00:00], usando sintéticos
+/home/agarcia/.local/lib/python3.12/site-packages/dask/array/chunk_types.py:131: UserWarning: A NumPy version >=2.0.0 and <2.8.0 is required for this version of SciPy (detected version 1.26.4)
+  import scipy.sparse
+/home/agarcia/.local/lib/python3.12/site-packages/scipy/sparse/_sputils.py:17: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.
+  np.uintc, np.long, np.ulong, np.longlong, np.ulonglong,
+2026-07-26 22:00:13,464 [INFO] SST insertada: 3200 registros
+2026-07-26 22:00:13,465 [INFO] Descargando viento...
+2026-07-26 22:00:14,630 [INFO] Surgencia calculada: 800 registros
+2026-07-26 22:00:14,630 [INFO] Descargando CHL...
+2026-07-26 22:00:18,680 [INFO] CHL insertada: 6975 registros
+2026-07-26 22:00:18,682 [INFO] Descargando BGC...
+2026-07-26 22:00:18,824 [INFO] BGC insertado: 100 registros
+2026-07-26 22:00:18,824 [INFO] === DESCARGA CMEMS COMPLETADA ===
+[dom 26 jul 2026 18:00:19 -04] 3. Calculando indicadores...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-26 18:00:19,650 [INFO] === CALCULANDO INDICADORES ===
+2026-07-26 18:00:20,032 [INFO] HCS calculado: 30 registros
+2026-07-26 18:00:20,042 [INFO] Alertas generadas: 1
+2026-07-26 18:00:20,042 [INFO] === CALCULO COMPLETADO ===
+[dom 26 jul 2026 18:00:20 -04] HDO ETL: Completado.
+/Data2/super_sistema/scripts/etl_runner.sh: line 5: /Data2/super_sistema/venv/bin/activate: No such file or directory
+[lun 27 jul 2026 06:00:01 -04] HDO ETL: Iniciando pipelines...
+[lun 27 jul 2026 06:00:01 -04] 1. Descargando NOAA...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-27 06:00:02,702 [INFO] Iniciando descarga de indices NOAA...
+2026-07-27 06:00:03,577 [INFO] ONI descargado: 917 registros
+2026-07-27 06:00:04,324 [INFO] Nino 3.4 descargado: 918 registros
+2026-07-27 06:00:04,964 [INFO] SOI descargado: 1812 registros
+2026-07-27 06:00:04,983 [INFO] Indices NOAA combinados: 1824 registros
+2026-07-27 06:00:04,985 [INFO] Periodo: 1950-01-01 a 2026-06-01
+2026-07-27 06:00:05,332 [INFO] Insertados 1824 registros en enos_indicadores
+2026-07-27 06:00:05,333 [INFO] Descarga NOAA completada
+[lun 27 jul 2026 06:00:05 -04] 2. Descargando CMEMS...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-27 06:00:06,325 [INFO] === INICIANDO DESCARGA CMEMS ===
+2026-07-27 06:00:06,325 [INFO] Descargando SST...
+INFO - 2026-07-27T10:00:11Z - Selected dataset version: "202003"
+2026-07-27 10:00:11,935 [INFO] Selected dataset version: "202003"
+INFO - 2026-07-27T10:00:11Z - Selected dataset part: "default"
+2026-07-27 10:00:11,936 [INFO] Selected dataset part: "default"
+2026-07-27 10:00:11,937 [ERROR] Error descargando SST CMEMS real: Some of your subset selection [2026-07-20 00:00:00+00:00, 2026-07-27 23:59:59+00:00] for the time dimension exceed the dataset coordinates [1981-10-01 00:00:00+00:00, 2026-03-31 00:00:00+00:00], usando sintéticos
+/home/agarcia/.local/lib/python3.12/site-packages/dask/array/chunk_types.py:131: UserWarning: A NumPy version >=2.0.0 and <2.8.0 is required for this version of SciPy (detected version 1.26.4)
+  import scipy.sparse
+/home/agarcia/.local/lib/python3.12/site-packages/scipy/sparse/_sputils.py:17: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.
+  np.uintc, np.long, np.ulong, np.longlong, np.ulonglong,
+2026-07-27 10:00:13,061 [INFO] SST insertada: 3200 registros
+2026-07-27 10:00:13,062 [INFO] Descargando viento...
+2026-07-27 10:00:17,211 [ERROR] Error descargando viento: cmems_mod_glo_wind_my_0.25deg_PT1H Please check that the dataset exists and the input datasetID is correct.
+2026-07-27 10:00:17,779 [INFO] Surgencia calculada: 800 registros
+2026-07-27 10:00:17,779 [INFO] Descargando CHL...
+INFO - 2026-07-27T10:00:23Z - Selected dataset version: "202603"
+2026-07-27 10:00:23,188 [INFO] Selected dataset version: "202603"
+INFO - 2026-07-27T10:00:23Z - Selected dataset part: "default"
+2026-07-27 10:00:23,188 [INFO] Selected dataset part: "default"
+WARNING - 2026-07-27T10:00:23Z - The dataset cmems_obs-oc_glo_bgc-plankton_my_l4-gapfree-multi-4km_P1D, version '202603', part 'default' is currently being updated. Data after 2026-01-28T00:00:00.000Z may not be up to date.
+2026-07-27 10:00:23,189 [WARNING] The dataset cmems_obs-oc_glo_bgc-plankton_my_l4-gapfree-multi-4km_P1D, version '202603', part 'default' is currently being updated. Data after 2026-01-28T00:00:00.000Z may not be up to date.
+WARNING - 2026-07-27T10:00:23Z - Some of your subset selection [2026-06-27 00:00:00+00:00, 2026-07-27 23:59:59+00:00] for the time dimension exceed the dataset coordinates [1997-09-04 00:00:00+00:00, 2026-07-19 00:00:00+00:00]
+2026-07-27 10:00:23,190 [WARNING] Some of your subset selection [2026-06-27 00:00:00+00:00, 2026-07-27 23:59:59+00:00] for the time dimension exceed the dataset coordinates [1997-09-04 00:00:00+00:00, 2026-07-19 00:00:00+00:00]
+/home/agarcia/.local/lib/python3.12/site-packages/scipy/sparse/_sputils.py:17: FutureWarning: In the future `np.long` will be defined as the corresponding NumPy scalar.
+  np.uintc, np.long, np.ulong, np.longlong, np.ulonglong,
+2026-07-27 10:00:26,974 [ERROR] Error descargando CHL CMEMS real: module 'numpy' has no attribute 'long', usando sintéticos
+2026-07-27 10:00:29,591 [INFO] CHL insertada: 6975 registros
+2026-07-27 10:00:29,593 [INFO] Descargando BGC...
+2026-07-27 10:00:29,770 [INFO] BGC insertado: 100 registros
+2026-07-27 10:00:29,770 [INFO] === DESCARGA CMEMS COMPLETADA ===
+[lun 27 jul 2026 06:00:30 -04] 3. Calculando indicadores...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-27 06:00:30,845 [INFO] === CALCULANDO INDICADORES ===
+2026-07-27 06:00:31,305 [INFO] HCS calculado: 30 registros
+2026-07-27 06:00:31,318 [INFO] Alertas generadas: 1
+2026-07-27 06:00:31,318 [INFO] === CALCULO COMPLETADO ===
+[lun 27 jul 2026 06:00:31 -04] HDO ETL: Completado.
+/Data2/super_sistema/scripts/etl_runner.sh: line 5: /Data2/super_sistema/venv/bin/activate: No such file or directory
+[lun 27 jul 2026 18:00:01 -04] HDO ETL: Iniciando pipelines...
+[lun 27 jul 2026 18:00:01 -04] 1. Descargando NOAA...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-27 18:00:01,946 [INFO] Iniciando descarga de indices NOAA...
+2026-07-27 18:00:02,885 [INFO] ONI descargado: 917 registros
+2026-07-27 18:00:03,628 [INFO] Nino 3.4 descargado: 918 registros
+2026-07-27 18:00:04,271 [INFO] SOI descargado: 1812 registros
+2026-07-27 18:00:04,301 [INFO] Indices NOAA combinados: 1824 registros
+2026-07-27 18:00:04,302 [INFO] Periodo: 1950-01-01 a 2026-06-01
+2026-07-27 18:00:04,636 [INFO] Insertados 1824 registros en enos_indicadores
+2026-07-27 18:00:04,636 [INFO] Descarga NOAA completada
+[lun 27 jul 2026 18:00:04 -04] 2. Descargando CMEMS...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-27 18:00:05,559 [INFO] === INICIANDO DESCARGA CMEMS ===
+2026-07-27 18:00:05,559 [INFO] Descargando SST...
+2026-07-27 18:00:05,595 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-27 18:00:05,967 [INFO] SST descargada: /Data2/super_sistema/data/nc_cache/sst_20260720_20260727.nc
+2026-07-27 18:00:06,677 [INFO] SST insertada: 3200 registros
+2026-07-27 18:00:06,678 [INFO] Descargando viento...
+2026-07-27 18:00:06,678 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-27 18:00:07,052 [INFO] Surgencia calculada: 800 registros
+2026-07-27 18:00:07,052 [INFO] Descargando CHL...
+2026-07-27 18:00:07,053 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-27 18:00:08,964 [INFO] CHL insertada: 6975 registros
+2026-07-27 18:00:08,965 [INFO] Descargando BGC...
+2026-07-27 18:00:09,119 [INFO] BGC insertado: 100 registros
+2026-07-27 18:00:09,119 [INFO] === DESCARGA CMEMS COMPLETADA ===
+[lun 27 jul 2026 18:00:09 -04] 3. Calculando indicadores...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-27 18:00:09,853 [INFO] === CALCULANDO INDICADORES ===
+2026-07-27 18:00:10,409 [INFO] HCS calculado: 30 registros
+2026-07-27 18:00:10,426 [INFO] Alertas generadas: 1
+2026-07-27 18:00:10,426 [INFO] === CALCULO COMPLETADO ===
+[lun 27 jul 2026 18:00:10 -04] HDO ETL: Completado.
+/Data2/super_sistema/scripts/etl_runner.sh: line 5: /Data2/super_sistema/venv/bin/activate: No such file or directory
+[mar 28 jul 2026 06:00:01 -04] HDO ETL: Iniciando pipelines...
+[mar 28 jul 2026 06:00:01 -04] 1. Descargando NOAA...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-28 06:00:02,570 [INFO] Iniciando descarga de indices NOAA...
+2026-07-28 06:00:03,439 [INFO] ONI descargado: 917 registros
+2026-07-28 06:00:04,189 [INFO] Nino 3.4 descargado: 918 registros
+2026-07-28 06:00:04,828 [INFO] SOI descargado: 1812 registros
+2026-07-28 06:00:04,853 [INFO] Indices NOAA combinados: 1824 registros
+2026-07-28 06:00:04,855 [INFO] Periodo: 1950-01-01 a 2026-06-01
+2026-07-28 06:00:05,139 [INFO] Insertados 1824 registros en enos_indicadores
+2026-07-28 06:00:05,139 [INFO] Descarga NOAA completada
+[mar 28 jul 2026 06:00:05 -04] 2. Descargando CMEMS...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-28 06:00:06,064 [INFO] === INICIANDO DESCARGA CMEMS ===
+2026-07-28 06:00:06,064 [INFO] Descargando SST...
+2026-07-28 06:00:06,100 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-28 06:00:06,423 [INFO] SST descargada: /Data2/super_sistema/data/nc_cache/sst_20260721_20260728.nc
+2026-07-28 06:00:07,110 [INFO] SST insertada: 3200 registros
+2026-07-28 06:00:07,110 [INFO] Descargando viento...
+2026-07-28 06:00:07,111 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-28 06:00:07,477 [INFO] Surgencia calculada: 800 registros
+2026-07-28 06:00:07,477 [INFO] Descargando CHL...
+2026-07-28 06:00:07,477 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-28 06:00:09,364 [INFO] CHL insertada: 6975 registros
+2026-07-28 06:00:09,366 [INFO] Descargando BGC...
+2026-07-28 06:00:09,461 [INFO] BGC insertado: 100 registros
+2026-07-28 06:00:09,461 [INFO] === DESCARGA CMEMS COMPLETADA ===
+[mar 28 jul 2026 06:00:09 -04] 3. Calculando indicadores...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-28 06:00:10,207 [INFO] === CALCULANDO INDICADORES ===
+2026-07-28 06:00:10,908 [INFO] HCS calculado: 30 registros
+2026-07-28 06:00:10,932 [INFO] Alertas generadas: 1
+2026-07-28 06:00:10,932 [INFO] === CALCULO COMPLETADO ===
+[mar 28 jul 2026 06:00:11 -04] HDO ETL: Completado.

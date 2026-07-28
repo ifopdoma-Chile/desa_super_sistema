@@ -1,0 +1,24 @@
+[Unit]
+Description=HDO - Humboldt Digital Ocean
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=agarcia
+Group=agarcia
+WorkingDirectory=/Data2/super_sistema
+Environment="HDO_CONFIG=production"
+Environment="HDO_DB_HOST=localhost"
+Environment="HDO_DB_PORT=5432"
+Environment="HDO_DB_NAME=hdo"
+Environment="HDO_DB_USER=postgres"
+Environment="HDO_DB_PASS=hdo2026"
+Environment="CMEMS_USERNAME=agarcia5"
+Environment="CMEMS_PASSWORD=Dream.2004"
+ExecStart=/usr/bin/gunicorn --workers 10 --worker-class sync --bind 0.0.0.0:8084 --timeout 120 wsgi:app
+ExecReload=/bin/kill -s HUP \$MAINPID
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

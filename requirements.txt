@@ -1,0 +1,16 @@
+Flask>=3.0
+Flask-SQLAlchemy>=3.0
+psycopg2-binary>=2.9
+gunicorn>=20.0
+pandas>=2.0
+numpy>=1.24
+xarray>=2023.0
+netCDF4>=1.6
+plotly>=5.15
+folium>=0.15
+matplotlib>=3.7
+scipy>=1.11
+requests>=2.31
+python-dateutil>=2.8
+copernicusmarine==2.4.0
+python-dotenv>=1.0

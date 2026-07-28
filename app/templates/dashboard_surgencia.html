@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h2>&#x1F30A; Surgencia Costera</h2>
+        <p class="text-muted">Transporte de Ekman e &Iacute;ndice Costero de Surgencia (CUI) a lo largo de la costa de Chile.</p>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-4"><div class="card bg-light h-100"><div class="card-body text-center"><h5>CUI Promedio</h5><h3 id="cui-promedio" class="text-primary">---</h3><small class="text-muted">m²/s (positivo = surgencia)</small></div></div></div>
+    <div class="col-md-4"><div class="card bg-light h-100"><div class="card-body text-center"><h5>Ekman Transport</h5><h3 id="ekman-promedio" class="text-info">---</h3><small class="text-muted">m²/s</small></div></div></div>
+    <div class="col-md-4"><div class="card bg-light h-100"><div class="card-body text-center"><h5>Zona Activa</h5><h3 id="zona-activa" class="text-success">---</h3><small class="text-muted">Mayor intensidad</small></div></div></div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">&#x1F4CA; Transporte de Ekman por Zona</div>
+            <div class="card-body">
+                <div id="surgencia-graph" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">&#x1F30D; Mapa de Surgencia Costera</div>
+            <div class="card-body">
+                <p class="text-muted">El mapa interactivo mostrar&aacute; la intensidad de surgencia a lo largo de la costa cuando haya datos disponibles.</p>
+                <div id="surgencia-map" style="height: 400px; background: #e8f4f8; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <span class="text-muted">&#x1F4DD; Datos de surgencia ser&aacute;n generados tras la primera descarga de viento CMEMS</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">&#x1F30A; &iquest;Qu&eacute; es la Surgencia Costera?</div>
+            <div class="card-body">
+                <p>La <strong>surgencia costera</strong> es el proceso por el cual aguas profundas, fr&iacute;as y ricas en nutrientes ascienden hacia la superficie cuando el viento sopla paralelo a la costa.</p>
+                <p>En Chile, los vientos del sur generan transporte de Ekman hacia el oeste, desplazando las aguas superficiales y permitiendo el ascenso de aguas subsuperficiales.</p>
+                <p><strong>Para la pesca:</strong> la surgencia es el motor de la productividad primaria del Sistema de la Corriente de Humboldt, uno de los ecosistemas m&aacute;s productivos del mundo.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">&#x1F4CA; &Iacute;ndice CUI &mdash; Metodolog&iacute;a</div>
+            <div class="card-body">
+                <p>El <strong>Coastal Upwelling Index (CUI)</strong> sigue la metodolog&iacute;a de NOAA PFEL (Pacific Fisheries Environmental Laboratory):</p>
+                <ul>
+                    <li>Calculado desde el estr&eacute;s del viento paralelo a la costa</li>
+                    <li>Transporte de Ekman perpendicular a la costa</li>
+                    <li>Valores positivos: surgencia (aguas fr&iacute;as ascienden)</li>
+                    <li>Valores negativos: downwelling (aguas se hunden)</li>
+                </ul>
+                <p><strong>Zonas de monitoreo:</strong> Norte Grande, Norte Chico, Centro, Sur, Austral.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    fetch("/hdo/api/v1/surgencia")
+        .then(r => r.json())
+        .then(data => {
+            if (!data.data || data.data.length === 0) {
+                document.getElementById("surgencia-graph").innerHTML = "<p class=text-center text-muted mt-5>No hay datos de surgencia disponibles. Los datos se generar&aacute;n tras la descarga de viento CMEMS.</p>";
+                return;
+            }
+            var d = data.data.reverse();
+            var fechas = d.map(x => x.fecha);
+            var cui = d.map(x => x.cui);
+            var ekman = d.map(x => x.ekman_transport);
+
+            var avgCui = cui.reduce((a, b) => a + b, 0) / cui.length;
+            var avgEkman = ekman.reduce((a, b) => a + b, 0) / ekman.length;
+            document.getElementById("cui-promedio").textContent = (parseFloat(avgCui) || 0).toFixed(2);
+            document.getElementById("ekman-promedio").textContent = (parseFloat(avgEkman) || 0).toFixed(2);
+            document.getElementById("zona-activa").textContent = d.length > 0 ? d[d.length - 1].zona : "N/D";
+
+            var trace = {x: fechas, y: cui, type: "scatter", mode: "lines+markers", name: "CUI", line: {color: "#27ae60", width: 2}};
+            var layout = {
+                xaxis: {title: "Fecha"}, yaxis: {title: "CUI (m²/s)", zerolinecolor: "#666"},
+                hovermode: "x unified", margin: {t: 20, b: 40, l: 50, r: 20}
+            };
+            Plotly.newPlot("surgencia-graph", [trace], layout, {responsive: true});
+        })
+        .catch(err => {
+            document.getElementById("surgencia-graph").innerHTML = "<p class=text-center text-muted mt-5>Error al cargar datos: " + err + "</p>";
+        });
+});
+</script>
+{% endblock %}

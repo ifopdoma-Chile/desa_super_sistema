@@ -1,0 +1,145 @@
+"""
+API REST Pública del HDO
+Endpoints: /hdo/api/v1/*
+Sin autenticación
+"""
+import csv
+import io
+from datetime import datetime, date as date_type
+from flask import Blueprint, jsonify, request, Response, make_response
+
+from app.servicios.datos import (
+    get_enos_ultimos, get_enos_historico,
+    get_surgencia_ultimos, get_surgencia_por_zona,
+    get_hcs_ultimos, get_acidificacion_ultimos,
+    get_alertas_activas, get_satelital,
+    get_estadisticas_dashboard
+)
+from app.servicios.geo import clasificar_enos, get_zonas_geojson
+
+api_bp = Blueprint("api", __name__)
+
+# Para exportar resultados como CSV
+def rows_to_csv(rows, columns):
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=columns)
+    writer.writeheader()
+    for row in rows:
+        writer.writerow({c: str(row.get(c, "")) for c in columns})
+    return output.getvalue()
+
+def serialize_row(row):
+    """Serializar fila de base de datos a dict compatible JSON"""
+    if row is None:
+        return None
+    result = {}
+    for key, value in dict(row).items():
+        if isinstance(value, (datetime, date_type)):
+            result[key] = value.strftime("%Y-%m-%d") if hasattr(value, 'strftime') else str(value)
+        elif isinstance(value, bytes):
+            result[key] = str(value)
+        else:
+            result[key] = value
+    return result
+
+def json_or_csv_response(data, columns=None):
+    """Retornar JSON o CSV según query parameter formato=csv"""
+    fmt = request.args.get("formato", "json")
+    
+    if fmt == "csv" and columns:
+        csv_data = rows_to_csv(data, columns)
+        return Response(
+            csv_data,
+            mimetype="text/csv",
+            headers={"Content-Disposition": "attachment; filename=hdo_export.csv"}
+        )
+    
+    return jsonify({"data": [serialize_row(r) for r in data], "count": len(data)})
+
+@api_bp.route("/enos", methods=["GET"])
+def api_enos():
+    """Últimos datos ENOS"""
+    limite = request.args.get("limite", 60, type=int)
+    data = get_enos_ultimos(limite)
+    cols = ["fecha", "oni", "nino34", "soi", "hci", "mei", "nino12_hdo"]
+    return json_or_csv_response(data, cols)
+
+@api_bp.route("/enos/historico", methods=["GET"])
+def api_enos_historico():
+    """Serie histórica ENOS"""
+    desde = request.args.get("desde")
+    hasta = request.args.get("hasta")
+    data = get_enos_historico(desde, hasta)
+    cols = ["fecha", "oni", "nino34", "soi", "hci", "mei", "nino12_hdo"]
+    return json_or_csv_response(data, cols)
+
+@api_bp.route("/surgencia", methods=["GET"])
+def api_surgencia():
+    """Últimos datos de surgencia"""
+    limite = request.args.get("limite", 100, type=int)
+    zona = request.args.get("zona")
+    
+    if zona:
+        data = get_surgencia_por_zona(zona, limite)
+    else:
+        data = get_surgencia_ultimos(limite)
+    
+    cols = ["fecha", "latitud", "zona", "ekman_transport", "cui", "sst_costera", "anomalia_surgencia"]
+    return json_or_csv_response(data, cols)
+
+@api_bp.route("/hcs", methods=["GET"])
+def api_hcs():
+    """Estado de la Corriente de Humboldt"""
+    limite = request.args.get("limite", 60, type=int)
+    data = get_hcs_ultimos(limite)
+    cols = ["fecha", "sst_promedio", "sst_anomalia", "chl_promedio", 
+            "ssh_promedio", "productividad", "extension_aguas_frias"]
+    return json_or_csv_response(data, cols)
+
+@api_bp.route("/acidificacion", methods=["GET"])
+def api_acidificacion():
+    """Datos de acidificación"""
+    limite = request.args.get("limite", 100, type=int)
+    data = get_acidificacion_ultimos(limite)
+    cols = ["fecha", "lat", "lon", "ph", "aragonito", "ph_anomalia", "profundidad"]
+    return json_or_csv_response(data, cols)
+
+@api_bp.route("/productividad", methods=["GET"])
+def api_productividad():
+    """Datos de productividad"""
+    limite = request.args.get("limite", 100, type=int)
+    data = get_satelital("chl", limite)
+    cols = ["fecha", "lat", "lon", "valor", "unidad", "fuente"]
+    return json_or_csv_response(data, cols)
+
+@api_bp.route("/alertas", methods=["GET"])
+def api_alertas():
+    """Alertas activas"""
+    data = get_alertas_activas()
+    cols = ["fecha", "tipo", "severidad", "descripcion", "valor", "umbral"]
+    return json_or_csv_response(data, cols)
+
+@api_bp.route("/status", methods=["GET"])
+def api_status():
+    """Estado del sistema HDO"""
+    stats = get_estadisticas_dashboard()
+    utc_now = datetime.utcnow()
+    return jsonify({
+        "sistema": "Humboldt Digital Ocean",
+        "version": "1.0.0",
+        "status": "operativo",
+        "ultima_actualizacion": utc_now.strftime("%Y-%m-%d %H:%M:%S UTC"),
+        "datos": {
+            "enos": stats["enos"] is not None,
+            "surgencia": stats["surgencia"] is not None,
+            "hcs": stats["hcs"] is not None,
+            "acidificacion": stats["acidificacion"] is not None,
+            "alertas_activas": stats["alertas_count"]
+        }
+    })
+
+@api_bp.route("/geografia/zonas", methods=["GET"])
+def api_geografia():
+    """Obtener zonas costeras en GeoJSON"""
+    zonas = get_zonas_geojson()
+    return jsonify(zonas)

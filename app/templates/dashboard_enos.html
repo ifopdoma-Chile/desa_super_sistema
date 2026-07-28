@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h2>&#x1F321; Monitoreo ENOS &mdash; El Ni&ntilde;o / La Ni&ntilde;a</h2>
+        <p class="text-muted">Indicadores del Fen&oacute;meno El Ni&ntilde;o-Oscilaci&oacute;n del Sur en el Pac&iacute;co Suroriental.</p>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-3"><div class="card bg-light h-100"><div class="card-body text-center"><h5>ONI</h5><h3 id="oni-valor" class="text-primary">---</h3><small class="text-muted">Oceanic Ni&ntilde;o Index</small></div></div></div>
+    <div class="col-md-3"><div class="card bg-light h-100"><div class="card-body text-center"><h5>Ni&ntilde;o 3.4</h5><h3 id="nino34-valor" class="text-danger">---</h3><small class="text-muted">Anomal&iacute;a SST</small></div></div></div>
+    <div class="col-md-3"><div class="card bg-light h-100"><div class="card-body text-center"><h5>SOI</h5><h3 id="soi-valor" class="text-success">---</h3><small class="text-muted">SO Index</small></div></div></div>
+    <div class="col-md-3"><div class="card bg-light h-100"><div class="card-body text-center"><h5>Fase Actual</h5><h3 id="fase-valor" class="text-warning">---</h3><small class="text-muted">Clasificaci&oacute;n</small></div></div></div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">&#x1F4CA; Serie Hist&oacute;rica ONI (1980-presente)</div>
+            <div class="card-body">
+                <div id="oni-graph" style="height: 450px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">&#x1F4CA; Comparaci&oacute;n &iacute;ndices ENOS</div>
+            <div class="card-body">
+                <div id="comparison-graph" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">&#x1F4CB; Datos &Uacute;ltimos 12 meses</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped" id="enos-table">
+                        <thead><tr><th>Fecha</th><th>ONI (&deg;C)</th><th>Ni&ntilde;o 3.4 (&deg;C)</th><th>SOI</th><th>Fase</th></tr></thead>
+                        <tbody id="enos-tbody"><tr><td colspan="5" class="text-muted">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    fetch("/hdo/api/v1/enos/historico")
+        .then(r => r.json())
+        .then(data => {
+            if (!data.data || data.data.length === 0) {
+                document.getElementById("oni-graph").innerHTML = "<p class=text-center text-muted mt-5>No hay datos históricos cargados. Ejecute el script de carga de datos NOAA.</p>";
+                return;
+            }
+            var d = data.data;
+            var fechas = d.map(x => x.fecha);
+            var oni = d.map(x => x.oni);
+            var nino34 = d.map(x => x.nino34);
+            var soi = d.map(x => x.soi);
+
+            // Ultimo valor
+            var ult = d[d.length - 1];
+            document.getElementById("oni-valor").textContent = ult.oni ? (parseFloat(ult.oni) || 0).toFixed(2) + "°C" : "N/D";
+            document.getElementById("nino34-valor").textContent = ult.nino34 ? (parseFloat(ult.nino34) || 0).toFixed(2) + "°C" : "N/D";
+            document.getElementById("soi-valor").textContent = ult.soi ? (parseFloat(ult.soi) || 0).toFixed(2) : "N/D";
+            var fase = "Neutro";
+            if (ult.nino34 && Math.abs(ult.nino34) >= 0.5) {
+                fase = ult.nino34 > 0 ? "El Niño" : "La Niña";
+                if (Math.abs(ult.nino34) >= 2) fase += " (Muy Fuerte)";
+                else if (Math.abs(ult.nino34) >= 1.5) fase += " (Fuerte)";
+                else if (Math.abs(ult.nino34) >= 1) fase += " (Moderado)";
+                else fase += " (Débil)";
+            }
+            document.getElementById("fase-valor").textContent = fase;
+
+            // Tabla ultimos 12
+            var ult12 = d.slice(-12).reverse();
+            var tbody = document.getElementById("enos-tbody");
+            tbody.innerHTML = "";
+            ult12.forEach(function(r) {
+                var f = r.nino34 ? (Math.abs(r.nino34) >= 0.5 ? (r.nino34 > 0 ? "El Niño" : "La Niña") : "Neutro") : "-";
+                tbody.innerHTML += "<tr><td>" + r.fecha + "</td><td>" + (r.oni ? (parseFloat(r.oni) || 0).toFixed(2) : "-") + "</td><td>" + (r.nino34 ? (parseFloat(r.nino34) || 0).toFixed(2) : "-") + "</td><td>" + (r.soi ? (parseFloat(r.soi) || 0).toFixed(2) : "-") + "</td><td>" + f + "</td></tr>";
+            });
+
+            // ONI graph
+            var trace1 = {x: fechas, y: oni, type: "scatter", mode: "lines", name: "ONI", line: {color: "#e74c3c", width: 2}};
+            var layout1 = {
+                xaxis: {title: "Fecha"}, yaxis: {title: "Anomalía (°C)", zerolinecolor: "#666"},
+                shapes: [
+                    {type: "rect", xref: "paper", y0: 0.5, y1: 100, x0: 0, x1: 1, fillcolor: "red", opacity: 0.03, layer: "below"},
+                    {type: "rect", xref: "paper", y0: -100, y1: -0.5, x0: 0, x1: 1, fillcolor: "blue", opacity: 0.03, layer: "below"}
+                ],
+                hovermode: "x unified", margin: {t: 20, b: 40, l: 50, r: 20}
+            };
+            Plotly.newPlot("oni-graph", [trace1], layout1, {responsive: true});
+
+            // Comparison graph
+            var trace2a = {x: fechas, y: nino34, type: "scatter", mode: "lines", name: "Niño 3.4", line: {color: "#3498db", width: 2}};
+            var trace2b = {x: fechas, y: soi, type: "scatter", mode: "lines", name: "SOI", yaxis: "y2", line: {color: "#2ecc71", width: 2}};
+            var layout2 = {
+                xaxis: {title: "Fecha"}, yaxis: {title: "Anomalía SST (°C)"},
+                yaxis2: {title: "SOI (hPa)", overlaying: "y", side: "right"},
+                hovermode: "x unified", margin: {t: 20, b: 40, l: 50, r: 50}
+            };
+            Plotly.newPlot("comparison-graph", [trace2a, trace2b], layout2, {responsive: true});
+        })
+        .catch(err => {
+            document.getElementById("oni-graph").innerHTML = "<p class=text-center text-muted mt-5>Error al cargar datos: " + err + "</p>";
+        });
+});
+</script>
+{% endblock %}

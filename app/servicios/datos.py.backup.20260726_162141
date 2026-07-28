@@ -1,0 +1,127 @@
+"""
+Servicio de consultas a base de datos HDO
+"""
+import pandas as pd
+from datetime import datetime, timedelta
+from app.servicios.db import query, get_db
+import logging
+
+logger = logging.getLogger(__name__)
+
+def get_enos_ultimos(limite=60):
+    """Obtener últimos registros ENOS"""
+    sql = """
+        SELECT fecha, oni, nino34, soi, hci, mei, nino12_hdo
+        FROM hdo.enos_indicadores
+        ORDER BY fecha DESC
+        LIMIT %s
+    """
+    return query(sql, (limite,))
+
+def get_enos_historico(desde=None, hasta=None):
+    """Obtener serie histórica ENOS"""
+    sql = """
+        SELECT fecha, oni, nino34, soi, hci, mei, nino12_hdo
+        FROM hdo.enos_indicadores
+        WHERE 1=1
+    """
+    params = []
+    if desde:
+        sql += " AND fecha >= %s"
+        params.append(desde)
+    if hasta:
+        sql += " AND fecha <= %s"
+        params.append(hasta)
+    sql += " ORDER BY fecha ASC"
+    return query(sql, params)
+
+def get_surgencia_ultimos(limite=100):
+    """Obtener últimos registros de surgencia"""
+    sql = """
+        SELECT fecha, latitud, zona, ekman_transport, cui, sst_costera, anomalia_surgencia
+        FROM hdo.surgencia
+        ORDER BY fecha DESC
+        LIMIT %s
+    """
+    return query(sql, (limite,))
+
+def get_surgencia_por_zona(zona, limite=365):
+    """Obtener surgencia por zona"""
+    sql = """
+        SELECT fecha, latitud, ekman_transport, cui, sst_costera
+        FROM hdo.surgencia
+        WHERE zona = %s
+        ORDER BY fecha DESC
+        LIMIT %s
+    """
+    return query(sql, (zona, limite))
+
+def get_hcs_ultimos(limite=60):
+    """Obtener indicadores HCS"""
+    sql = """
+        SELECT fecha, sst_promedio, sst_anomalia, chl_promedio, ssh_promedio, productividad, extension_aguas_frias
+        FROM hdo.hcs_indicadores
+        ORDER BY fecha DESC
+        LIMIT %s
+    """
+    return query(sql, (limite,))
+
+def get_acidificacion_ultimos(limite=100):
+    """Obtener datos de acidificación"""
+    sql = """
+        SELECT fecha, lat, lon, ph, aragonito, ph_anomalia, profundidad
+        FROM hdo.acidificacion
+        ORDER BY fecha DESC
+        LIMIT %s
+    """
+    return query(sql, (limite,))
+
+def get_alertas_activas():
+    """Obtener alertas activas"""
+    sql = """
+        SELECT fecha, tipo, severidad, descripcion, valor, umbral
+        FROM hdo.alertas
+        WHERE activa = TRUE
+        ORDER BY fecha DESC, severidad ASC
+    """
+    return query(sql)
+
+def get_satelital(variable, limite=1000):
+    """Obtener datos satelitales por variable"""
+    sql = """
+        SELECT fecha, lat, lon, valor, unidad, fuente
+        FROM hdo.productos_satelitales
+        WHERE variable = %s
+        ORDER BY fecha DESC
+        LIMIT %s
+    """
+    return query(sql, (variable, limite))
+
+def get_estadisticas_dashboard():
+    """Obtener estadísticas para dashboard principal"""
+    stats = {}
+    
+    # Último ENOS
+    enos = get_enos_ultimos(1)
+    stats["enos"] = enos[0] if enos else None
+    
+    # Última surgencia
+    sur = get_surgencia_ultimos(1)
+    stats["surgencia"] = sur[0] if sur else None
+    
+    # Último HCS
+    hcs = get_hcs_ultimos(1)
+    stats["hcs"] = hcs[0] if hcs else None
+    
+    # Alertas activas
+    stats["alertas"] = get_alertas_activas()
+    stats["alertas_count"] = len(stats["alertas"])
+    
+    # Última acidificación
+    acid = get_acidificacion_ultimos(1)
+    stats["acidificacion"] = acid[0] if acid else None
+    
+    # Fechas
+    stats["ultima_actualizacion"] = datetime.now()
+    
+    return stats

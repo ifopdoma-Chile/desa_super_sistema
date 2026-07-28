@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h2>&#x1F40B; {{ titulo }}</h2>
+        <p class="text-muted">Sistema de monitoreo de la Corriente de Humboldt y variables asociadas.</p>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-3"><div class="card bg-light h-100"><div class="card-body text-center"><h5>SST Promedio</h5><h3 id="sst-valor" class="text-primary">---</h3><small class="text-muted">&deg;C</small></div></div></div>
+    <div class="col-md-3"><div class="card bg-light h-100"><div class="card-body text-center"><h5>Anomal&iacute;a SST</h5><h3 id="sst-anom" class="text-danger">---</h3><small class="text-muted">&deg;C</small></div></div></div>
+    <div class="col-md-3"><div class="card bg-light h-100"><div class="card-body text-center"><h5>CHL Promedio</h5><h3 id="chl-valor" class="text-success">---</h3><small class="text-muted">mg/m&sup3;</small></div></div></div>
+    <div class="col-md-3"><div class="card bg-light h-100"><div class="card-body text-center"><h5>Aguas Fr&iacute;as</h5><h3 id="extension-valor" class="text-info">---</h3><small class="text-muted">km&sup2;</small></div></div></div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">&#x1F4CA; Indicadores del Sistema de la Corriente de Humboldt</div>
+            <div class="card-body">
+                <div id="hcs-graph" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">&#x1F30D; Datos Satelitales &mdash; Chile Costero (18-56&deg;S)</div>
+            <div class="card-body">
+                <div id="satelital-graph" style="height: 350px;"></div>
+                <p class="text-muted text-center mt-2"><small>Datos de SST y CHL desde Copernicus Marine Service (CMEMS). &Aacute;rea: Chile costero y Pac&iacute;fico Suroriental.</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">&#x2139; Acerca del HCS</div>
+            <div class="card-body">
+                <p>El <strong>Sistema de la Corriente de Humboldt (HCS)</strong> es uno de los ecosistemas marinos m&aacute;s productivos del mundo. Se extiende desde el sur de Chile (~42&deg;S) hasta el norte del Per&uacute; (~4&deg;S).</p>
+                <p>Caracterizado por:</p>
+                <ul>
+                    <li><strong>Aguas fr&iacute;as:</strong> Temperaturas superficiales entre 12-22&deg;C</li>
+                    <li><strong>Alta productividad:</strong> Soporta ~20% de la pesca mundial</li>
+                    <li><strong>Surgencia costera:</strong> Vientos del sur generan ascenso de nutrientes</li>
+                    <li><strong>Sensible a ENOS:</strong> Eventos El Ni&ntilde;o/La Ni&ntilde;a alteran dr&aacute;sticamente el ecosistema</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if modulo == "alertas" %}
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">&#x1F514; Alertas Activas</div>
+            <div class="card-body">
+                <div id="alertas-container">
+                    <p class="text-muted">Consultando alertas...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    fetch("/hdo/api/v1/hcs")
+        .then(r => r.json())
+        .then(data => {
+            if (!data.data || data.data.length === 0) {
+                document.getElementById("hcs-graph").innerHTML = "<p class=text-center text-muted mt-5>No hay datos HCS disponibles. Los datos se generar&aacute;n tras la primera descarga CMEMS.</p>";
+                return;
+            }
+            var d = data.data;
+            var fechas = d.map(x => x.fecha);
+            var sst = d.map(x => x.sst_promedio);
+            var chl = d.map(x => x.chl_promedio);
+            var ssh = d.map(x => x.ssh_promedio);
+            var extension = d.map(x => x.extension_aguas_frias);
+
+            var ult = d[d.length - 1];
+            document.getElementById("sst-valor").textContent = ult.sst_promedio ? (parseFloat(ult.sst_promedio) || 0).toFixed(2) + "°C" : "N/D";
+            document.getElementById("sst-anom").textContent = ult.sst_anomalia ? (ult.sst_anomalia > 0 ? "+" : "") + (parseFloat(ult.sst_anomalia) || 0).toFixed(2) + "°C" : "N/D";
+            document.getElementById("chl-valor").textContent = ult.chl_promedio ? (parseFloat(ult.chl_promedio) || 0).toFixed(3) : "N/D";
+            document.getElementById("extension-valor").textContent = ult.extension_aguas_frias ? Math.round(ult.extension_aguas_frias).toLocaleString() : "N/D";
+
+            var traceSST = {x: fechas, y: sst, type: "scatter", mode: "lines+markers", name: "SST (°C)", line: {color: "#e74c3c", width: 2}};
+            var traceCHL = {x: fechas, y: chl, type: "scatter", mode: "lines+markers", name: "CHL (mg/m³)", yaxis: "y2", line: {color: "#27ae60", width: 2}};
+            var layout = {
+                xaxis: {title: "Fecha"}, yaxis: {title: "SST (°C)"},
+                yaxis2: {title: "CHL (mg/m³)", overlaying: "y", side: "right"},
+                hovermode: "x unified", margin: {t: 20, b: 40, l: 50, r: 50}
+            };
+            Plotly.newPlot("hcs-graph", [traceSST, traceCHL], layout, {responsive: true});
+        })
+        .catch(err => {
+            document.getElementById("hcs-graph").innerHTML = "<p class=text-center text-muted mt-5>Error al cargar datos: " + err + "</p>";
+        });
+
+    // Cargar datos satelitales
+    fetch("/hdo/api/v1/productividad")
+        .then(r => r.json())
+        .then(data => {
+            if (!data.data || data.data.length === 0) return;
+            // Graph simple de valores CHL
+            var d = data.data.slice(0, 30).reverse();
+            var fechas = d.map(x => x.fecha);
+            var valores = d.map(x => x.valor);
+            var trace = {x: fechas, y: valores, type: "scatter", mode: "markers", name: "CHL", marker: {color: "#2ecc71", size: 6}};
+            var layout = {
+                xaxis: {title: "Fecha"}, yaxis: {title: "CHL (mg/m³)", type: "log"},
+                hovermode: "x unified", margin: {t: 10, b: 40, l: 50, r: 20}
+            };
+            Plotly.newPlot("satelital-graph", [trace], layout, {responsive: true});
+        })
+        .catch(() => {});
+
+    // Alertas
+    var modulo = "{{ modulo }}";
+    if (modulo === "alertas") {
+        fetch("/hdo/api/v1/alertas")
+            .then(r => r.json())
+            .then(data => {
+                var c = document.getElementById("alertas-container");
+                if (!data.data || data.data.length === 0) {
+                    c.innerHTML = "<div class=alert alert-success>&#x2705; No hay alertas activas en este momento.</div>";
+                    return;
+                }
+                var html = "<div class=list-group>";
+                data.data.forEach(function(a) {
+                    var cls = a.severidad === "Crítica" || a.severidad === "Extremo" ? "danger" : a.severidad === "Fuerte" ? "warning" : "info";
+                    html += "<div class=list-group-item list-group-item- + cls + >";
+                    html += "<strong>" + a.tipo + ":</strong> " + a.descripcion;
+                    html += " <span class=badge bg- + cls +  float-end>" + a.severidad + "</span>";
+                    html += "</div>";
+                });
+                html += "</div>";
+                c.innerHTML = html;
+            })
+            .catch(err => {
+                document.getElementById("alertas-container").innerHTML = "<div class=alert alert-warning>Error al cargar alertas</div>";
+            });
+    }
+});
+</script>
+{% endblock %}

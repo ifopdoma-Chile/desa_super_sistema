@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h2>&#x1F4E1; API REST &mdash; Humboldt Digital Ocean</h2>
+        <p class="text-muted">API p&uacute;blica sin autenticaci&oacute;n para acceder a los datos del observatorio.</p>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">Endpoint Base</div>
+    <div class="card-body">
+        <code class="fs-5">https://sapogis.ifop.cl/hdo/api/v1/</code>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">Endpoints Disponibles</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead><tr><th>Endpoint</th><th>M&eacute;todo</th><th>Descripci&oacute;n</th><th>Par&aacute;metros</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>/status</code></td><td>GET</td><td>Estado del sistema</td><td>-</td></tr>
+                            <tr><td><code>/enos</code></td><td>GET</td><td>&Uacute;ltimos indicadores ENOS</td><td><code>limite</code> (default 60)</td></tr>
+                            <tr><td><code>/enos/historico</code></td><td>GET</td><td>Serie hist&oacute;rica ENOS</td><td><code>desde</code>, <code>hasta</code> (YYYY-MM-DD)</td></tr>
+                            <tr><td><code>/surgencia</code></td><td>GET</td><td>Datos de surgencia costera</td><td><code>zona</code>, <code>limite</code> (default 100)</td></tr>
+                            <tr><td><code>/hcs</code></td><td>GET</td><td>Indicadores H. Current</td><td><code>limite</code> (default 60)</td></tr>
+                            <tr><td><code>/acidificacion</code></td><td>GET</td><td>Datos de acidificaci&oacute;n</td><td><code>limite</code> (default 100)</td></tr>
+                            <tr><td><code>/productividad</code></td><td>GET</td><td>Datos de productividad (CHL)</td><td><code>limite</code> (default 100)</td></tr>
+                            <tr><td><code>/alertas</code></td><td>GET</td><td>Alertas activas</td><td>-</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Ejemplos de uso</div>
+            <div class="card-body">
+                <h6>JSON (default):</h6>
+                <pre><code>curl https://sapogis.ifop.cl/hdo/api/v1/enos</code></pre>
+                <h6 class="mt-3">CSV:</h6>
+                <pre><code>curl https://sapogis.ifop.cl/hdo/api/v1/enos?formato=csv</code></pre>
+                <h6 class="mt-3">Rango de fechas:</h6>
+                <pre><code>curl "https://sapogis.ifop.cl/hdo/api/v1/enos/historico?desde=2020-01-01&hasta=2024-12-31"</code></pre>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Respuesta JSON</div>
+            <div class="card-body">
+                <pre><code>{
+  "data": [
+    {
+      "fecha": "2026-07-01",
+      "oni": 0.85,
+      "nino34": 0.92,
+      "soi": -1.2,
+      "hci": null,
+      "mei": null,
+      "nino12_hdo": null
+    }
+  ],
+  "count": 1
+}</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

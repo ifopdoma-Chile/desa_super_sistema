@@ -1,0 +1,73 @@
+:root {
+    --hdo-dark: #0c2d48;
+    --hdo-primary: #145da0;
+    --hdo-secondary: #0c7b93;
+    --hdo-accent: #2ecc71;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+}
+
+.bg-dark-blue {
+    background-color: var(--hdo-dark) !important;
+}
+
+.navbar .nav-link {
+    color: rgba(255,255,255,0.85) !important;
+    transition: color 0.2s;
+    font-size: 0.9rem;
+}
+.navbar .nav-link:hover {
+    color: #fff !important;
+}
+
+.hero-section {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: box-shadow 0.3s;
+}
+.card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+.card-header {
+    font-weight: 600;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid var(--hdo-primary);
+}
+
+.footer {
+    border-top: 3px solid var(--hdo-primary);
+}
+
+code {
+    background: #f4f4f4;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #c7254e;
+}
+
+pre code {
+    background: #272822;
+    color: #f8f8f2;
+    padding: 12px;
+    display: block;
+    border-radius: 6px;
+    overflow-x: auto;
+}
+
+#status-badge {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+}
+
+@media (max-width: 768px) {
+    .hero-section h1 { font-size: 1.8rem; }
+    .card-body { padding: 0.8rem; }
+}
