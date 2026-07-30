@@ -245,3 +245,217 @@ WARNING - 2026-07-27T10:00:23Z - Some of your subset selection [2026-06-27 00:00
 2026-07-28 06:00:10,932 [INFO] Alertas generadas: 1
 2026-07-28 06:00:10,932 [INFO] === CALCULO COMPLETADO ===
 [mar 28 jul 2026 06:00:11 -04] HDO ETL: Completado.
+/Data2/super_sistema/scripts/etl_runner.sh: line 5: /Data2/super_sistema/venv/bin/activate: No such file or directory
+[mar 28 jul 2026 18:00:01 -04] HDO ETL: Iniciando pipelines...
+[mar 28 jul 2026 18:00:01 -04] 1. Descargando NOAA...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-28 18:00:02,179 [INFO] Iniciando descarga de indices NOAA...
+2026-07-28 18:00:03,024 [INFO] ONI descargado: 917 registros
+2026-07-28 18:00:03,773 [INFO] Nino 3.4 descargado: 918 registros
+2026-07-28 18:00:04,414 [INFO] SOI descargado: 1812 registros
+2026-07-28 18:00:04,435 [INFO] Indices NOAA combinados: 1824 registros
+2026-07-28 18:00:04,437 [INFO] Periodo: 1950-01-01 a 2026-06-01
+2026-07-28 18:00:04,791 [INFO] Insertados 1824 registros en enos_indicadores
+2026-07-28 18:00:04,792 [INFO] Descarga NOAA completada
+[mar 28 jul 2026 18:00:04 -04] 2. Descargando CMEMS...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-28 18:00:05,879 [INFO] === INICIANDO DESCARGA CMEMS ===
+2026-07-28 18:00:05,880 [INFO] Descargando SST...
+2026-07-28 18:00:05,915 [INFO] Usando caché: /Data2/super_sistema/data/nc_cache/sst_20260721_20260728.nc
+2026-07-28 18:00:07,437 [INFO] SST insertada: 3200 registros
+2026-07-28 18:00:07,437 [INFO] Descargando viento...
+2026-07-28 18:00:08,107 [INFO] Surgencia calculada: 800 registros
+2026-07-28 18:00:08,107 [INFO] Descargando CHL...
+2026-07-28 18:00:11,180 [INFO] CHL insertada: 6975 registros
+2026-07-28 18:00:11,181 [INFO] Descargando BGC...
+2026-07-28 18:00:11,321 [INFO] BGC insertado: 100 registros
+2026-07-28 18:00:11,321 [INFO] === DESCARGA CMEMS COMPLETADA ===
+[mar 28 jul 2026 18:00:11 -04] 3. Calculando indicadores...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-28 18:00:12,058 [INFO] === CALCULANDO INDICADORES ===
+Traceback (most recent call last):
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 95, in <module>
+    main()
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 90, in main
+    calcular_hcs()
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 56, in calcular_hcs
+    insert_many("hcs_indicadores", cols, hcs_rows)
+  File "/Data2/super_sistema/app/servicios/db.py", line 48, in insert_many
+    execute_values(cur, sql, rows)
+  File "/home/agarcia/.local/lib/python3.12/site-packages/psycopg2/extras.py", line 1299, in execute_values
+    cur.execute(b''.join(parts))
+psycopg2.errors.NumericValueOutOfRange: numeric field overflow
+DETAIL:  A field with precision 8, scale 2 must round to an absolute value less than 10^6.
+
+[mar 28 jul 2026 18:00:13 -04] HDO ETL: Completado.
+/Data2/super_sistema/scripts/etl_runner.sh: line 5: /Data2/super_sistema/venv/bin/activate: No such file or directory
+[mié 29 jul 2026 06:00:01 -04] HDO ETL: Iniciando pipelines...
+[mié 29 jul 2026 06:00:01 -04] 1. Descargando NOAA...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-29 06:00:01,979 [INFO] Iniciando descarga de indices NOAA...
+2026-07-29 06:00:03,127 [INFO] ONI descargado: 917 registros
+2026-07-29 06:00:04,231 [INFO] Nino 3.4 descargado: 918 registros
+2026-07-29 06:00:05,281 [INFO] SOI descargado: 1812 registros
+2026-07-29 06:00:05,297 [INFO] Indices NOAA combinados: 1824 registros
+2026-07-29 06:00:05,299 [INFO] Periodo: 1950-01-01 a 2026-06-01
+2026-07-29 06:00:05,613 [INFO] Insertados 1824 registros en enos_indicadores
+2026-07-29 06:00:05,613 [INFO] Descarga NOAA completada
+[mié 29 jul 2026 06:00:05 -04] 2. Descargando CMEMS...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-29 06:00:06,488 [INFO] === INICIANDO DESCARGA CMEMS ===
+2026-07-29 06:00:06,488 [INFO] Descargando SST...
+2026-07-29 06:00:06,523 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-29 06:00:06,927 [INFO] SST descargada: /Data2/super_sistema/data/nc_cache/sst_20260722_20260729.nc
+2026-07-29 06:00:07,630 [INFO] SST insertada: 3200 registros
+2026-07-29 06:00:07,630 [INFO] Descargando viento...
+2026-07-29 06:00:07,631 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-29 06:00:08,003 [INFO] Surgencia calculada: 800 registros
+2026-07-29 06:00:08,004 [INFO] Descargando CHL...
+2026-07-29 06:00:08,004 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-29 06:00:09,894 [INFO] CHL insertada: 6975 registros
+2026-07-29 06:00:09,896 [INFO] Descargando BGC...
+2026-07-29 06:00:09,991 [INFO] BGC insertado: 100 registros
+2026-07-29 06:00:09,991 [INFO] === DESCARGA CMEMS COMPLETADA ===
+[mié 29 jul 2026 06:00:10 -04] 3. Calculando indicadores...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-29 06:00:10,754 [INFO] === CALCULANDO INDICADORES ===
+Traceback (most recent call last):
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 95, in <module>
+    main()
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 90, in main
+    calcular_hcs()
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 56, in calcular_hcs
+    insert_many("hcs_indicadores", cols, hcs_rows)
+  File "/Data2/super_sistema/app/servicios/db.py", line 48, in insert_many
+    execute_values(cur, sql, rows)
+  File "/home/agarcia/.local/lib/python3.12/site-packages/psycopg2/extras.py", line 1299, in execute_values
+    cur.execute(b''.join(parts))
+psycopg2.errors.NumericValueOutOfRange: numeric field overflow
+DETAIL:  A field with precision 8, scale 2 must round to an absolute value less than 10^6.
+
+[mié 29 jul 2026 06:00:11 -04] HDO ETL: Completado.
+/Data2/super_sistema/scripts/etl_runner.sh: line 5: /Data2/super_sistema/venv/bin/activate: No such file or directory
+[mié 29 jul 2026 18:00:01 -04] HDO ETL: Iniciando pipelines...
+[mié 29 jul 2026 18:00:01 -04] 1. Descargando NOAA...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-29 18:00:02,558 [INFO] Iniciando descarga de indices NOAA...
+2026-07-29 18:00:03,953 [INFO] ONI descargado: 917 registros
+2026-07-29 18:00:05,377 [INFO] Nino 3.4 descargado: 918 registros
+2026-07-29 18:00:06,301 [INFO] SOI descargado: 1812 registros
+2026-07-29 18:00:06,318 [INFO] Indices NOAA combinados: 1824 registros
+2026-07-29 18:00:06,319 [INFO] Periodo: 1950-01-01 a 2026-06-01
+2026-07-29 18:00:06,658 [INFO] Insertados 1824 registros en enos_indicadores
+2026-07-29 18:00:06,658 [INFO] Descarga NOAA completada
+[mié 29 jul 2026 18:00:06 -04] 2. Descargando CMEMS...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-29 18:00:07,478 [INFO] === INICIANDO DESCARGA CMEMS ===
+2026-07-29 18:00:07,478 [INFO] Descargando SST...
+2026-07-29 18:00:07,513 [INFO] Usando caché: /Data2/super_sistema/data/nc_cache/sst_20260722_20260729.nc
+2026-07-29 18:00:09,017 [INFO] SST insertada: 3200 registros
+2026-07-29 18:00:09,017 [INFO] Descargando viento...
+2026-07-29 18:00:09,696 [INFO] Surgencia calculada: 800 registros
+2026-07-29 18:00:09,696 [INFO] Descargando CHL...
+2026-07-29 18:00:12,840 [INFO] CHL insertada: 6975 registros
+2026-07-29 18:00:12,843 [INFO] Descargando BGC...
+2026-07-29 18:00:12,984 [INFO] BGC insertado: 100 registros
+2026-07-29 18:00:12,984 [INFO] === DESCARGA CMEMS COMPLETADA ===
+[mié 29 jul 2026 18:00:13 -04] 3. Calculando indicadores...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-29 18:00:13,724 [INFO] === CALCULANDO INDICADORES ===
+Traceback (most recent call last):
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 95, in <module>
+    main()
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 90, in main
+    calcular_hcs()
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 56, in calcular_hcs
+    insert_many("hcs_indicadores", cols, hcs_rows)
+  File "/Data2/super_sistema/app/servicios/db.py", line 48, in insert_many
+    execute_values(cur, sql, rows)
+  File "/home/agarcia/.local/lib/python3.12/site-packages/psycopg2/extras.py", line 1299, in execute_values
+    cur.execute(b''.join(parts))
+psycopg2.errors.NumericValueOutOfRange: numeric field overflow
+DETAIL:  A field with precision 8, scale 2 must round to an absolute value less than 10^6.
+
+[mié 29 jul 2026 18:00:14 -04] HDO ETL: Completado.
+/Data2/super_sistema/scripts/etl_runner.sh: line 5: /Data2/super_sistema/venv/bin/activate: No such file or directory
+[jue 30 jul 2026 06:00:01 -04] HDO ETL: Iniciando pipelines...
+[jue 30 jul 2026 06:00:01 -04] 1. Descargando NOAA...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-30 06:00:02,273 [INFO] Iniciando descarga de indices NOAA...
+2026-07-30 06:00:03,409 [INFO] ONI descargado: 917 registros
+2026-07-30 06:00:04,505 [INFO] Nino 3.4 descargado: 918 registros
+2026-07-30 06:00:05,431 [INFO] SOI descargado: 1812 registros
+2026-07-30 06:00:05,448 [INFO] Indices NOAA combinados: 1824 registros
+2026-07-30 06:00:05,450 [INFO] Periodo: 1950-01-01 a 2026-06-01
+2026-07-30 06:00:05,786 [INFO] Insertados 1824 registros en enos_indicadores
+2026-07-30 06:00:05,786 [INFO] Descarga NOAA completada
+[jue 30 jul 2026 06:00:06 -04] 2. Descargando CMEMS...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-30 06:00:06,688 [INFO] === INICIANDO DESCARGA CMEMS ===
+2026-07-30 06:00:06,688 [INFO] Descargando SST...
+2026-07-30 06:00:06,725 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-30 06:00:07,095 [INFO] SST descargada: /Data2/super_sistema/data/nc_cache/sst_20260723_20260730.nc
+2026-07-30 06:00:07,785 [INFO] SST insertada: 3200 registros
+2026-07-30 06:00:07,786 [INFO] Descargando viento...
+2026-07-30 06:00:07,786 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-30 06:00:08,157 [INFO] Surgencia calculada: 800 registros
+2026-07-30 06:00:08,157 [INFO] Descargando CHL...
+2026-07-30 06:00:08,157 [WARNING] copernicusmarine no instalado, usando stub
+2026-07-30 06:00:10,055 [INFO] CHL insertada: 6975 registros
+2026-07-30 06:00:10,057 [INFO] Descargando BGC...
+2026-07-30 06:00:10,153 [INFO] BGC insertado: 100 registros
+2026-07-30 06:00:10,153 [INFO] === DESCARGA CMEMS COMPLETADA ===
+[jue 30 jul 2026 06:00:10 -04] 3. Calculando indicadores...
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/computation/expressions.py:23: UserWarning: Pandas requires version '2.10.2' or newer of 'numexpr' (version '2.9.0' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/agarcia/.local/lib/python3.12/site-packages/pandas/core/arrays/masked.py:56: UserWarning: Pandas requires version '1.4.2' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+2026-07-30 06:00:10,887 [INFO] === CALCULANDO INDICADORES ===
+Traceback (most recent call last):
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 95, in <module>
+    main()
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 90, in main
+    calcular_hcs()
+  File "/Data2/super_sistema/scripts/calcular_indicadores.py", line 56, in calcular_hcs
+    insert_many("hcs_indicadores", cols, hcs_rows)
+  File "/Data2/super_sistema/app/servicios/db.py", line 48, in insert_many
+    execute_values(cur, sql, rows)
+  File "/home/agarcia/.local/lib/python3.12/site-packages/psycopg2/extras.py", line 1299, in execute_values
+    cur.execute(b''.join(parts))
+psycopg2.errors.NumericValueOutOfRange: numeric field overflow
+DETAIL:  A field with precision 8, scale 2 must round to an absolute value less than 10^6.
+
+[jue 30 jul 2026 06:00:12 -04] HDO ETL: Completado.
