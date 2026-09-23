@@ -93,14 +93,27 @@ def indice_hcs_sst(df_sst, lat_min=-40.0, lat_max=-18.0, lon_min=-85.0, lon_max=
 def indice_extension_aguas_frias(df_sst, umbral=18.0):
     """
     Calcular extensión de aguas frías (SST < umbral) en el HCS
-    Retorna área en km2 (aproximación)
+    Retorna área en km2, usando la resolución real de la grilla
+    (no asume celdas de 1°)
     """
     frias = df_sst[df_sst["valor"] < umbral]
     if frias.empty:
         return 0.0
-    # Aproximación: 1 grado ~ 111km
-    area_aprox = len(frias) * 111 * 111 * 0.5  # media celda en km2
-    return area_aprox
+
+    # Resolución de la grilla (grados) desde las coordenadas únicas
+    def _step(coords):
+        vals = np.sort(np.unique(coords))
+        if len(vals) < 2:
+            return 1.0
+        return float(np.median(np.diff(vals)))
+
+    dlat = _step(df_sst["lat"].values)
+    dlon = _step(df_sst["lon"].values)
+    lat_medio = float(frias["lat"].mean())
+
+    # Área de una celda: (111.32*dlat) * (111.32*dlon*cos(lat)) en km2
+    area_celda = (111.32 * dlat) * (111.32 * dlon) * np.cos(np.radians(abs(lat_medio)))
+    return float(len(frias) * area_celda)
 
 def generar_alertas(indicadores):
     """
@@ -127,7 +140,7 @@ def generar_alertas(indicadores):
             alertas.append({
                 "tipo": "ENOS",
                 "severidad": severidad,
-                "descripcion": f"{fase} {severidad}: Niño 3.4 = {indicadores[nino34]:.2f}°C",
+                "descripcion": f"{fase} {severidad}: Niño 3.4 = {indicadores['nino34']:.2f}°C",
                 "valor": indicadores["nino34"],
                 "umbral": 0.5
             })
@@ -138,7 +151,7 @@ def generar_alertas(indicadores):
             alertas.append({
                 "tipo": "Acidificación",
                 "severidad": "Crítica",
-                "descripcion": f"pH crítico: {indicadores[ph]:.2f} (umbral: 7.8)",
+                "descripcion": f"pH crítico: {indicadores['ph']:.2f} (umbral: 7.8)",
                 "valor": indicadores["ph"],
                 "umbral": 7.8
             })
@@ -146,7 +159,7 @@ def generar_alertas(indicadores):
             alertas.append({
                 "tipo": "Acidificación",
                 "severidad": "Alerta",
-                "descripcion": f"pH bajo: {indicadores[ph]:.2f} (umbral: 7.8)",
+                "descripcion": f"pH bajo: {indicadores['ph']:.2f} (umbral: 7.8)",
                 "valor": indicadores["ph"],
                 "umbral": 7.8
             })

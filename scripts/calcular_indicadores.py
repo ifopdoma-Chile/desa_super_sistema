@@ -37,16 +37,25 @@ def calcular_hcs():
         df_fecha = df[df["fecha"] == fecha]
         sst_data = df_fecha[df_fecha["variable"] == "sst"]
         chl_data = df_fecha[df_fecha["variable"] == "chl"]
-        sst_prom = sst_data["valor"].mean() if not sst_data.empty else None
-        chl_prom = chl_data["valor"].mean() if not chl_data.empty else None
+        # Filtrar a la región del HCS (lat -40..-18, lon -85..-70)
+        hcs_sst = sst_data[
+            (sst_data["lat"] >= -40.0) & (sst_data["lat"] <= -18.0) &
+            (sst_data["lon"] >= -85.0) & (sst_data["lon"] <= -70.0)
+        ] if not sst_data.empty else sst_data
+        hcs_chl = chl_data[
+            (chl_data["lat"] >= -40.0) & (chl_data["lat"] <= -18.0) &
+            (chl_data["lon"] >= -85.0) & (chl_data["lon"] <= -70.0)
+        ] if not chl_data.empty else chl_data
+        sst_prom = hcs_sst["valor"].mean() if not hcs_sst.empty else None
+        chl_prom = hcs_chl["valor"].mean() if not hcs_chl.empty else None
         sst_anom = 0.0
-        if sst_prom:
-            sst_clim = df[df["variable"] == "sst"]["valor"].mean()
+        if sst_prom is not None:
+            sst_clim = hcs_sst["valor"].mean()
             sst_anom = sst_prom - sst_clim
-        extension = indice_extension_aguas_frias(sst_data, umbral=18.0) if not sst_data.empty else 0
+        extension = indice_extension_aguas_frias(hcs_sst, umbral=18.0) if not hcs_sst.empty else 0
         prod = 0.001
-        if not chl_data.empty and not sst_data.empty:
-            prod = calcular_productividad(chl_data["valor"].mean(), sst_data["valor"].mean())
+        if not hcs_chl.empty and not hcs_sst.empty:
+            prod = calcular_productividad(hcs_chl["valor"].mean(), hcs_sst["valor"].mean())
         def _to_native(v):
             return float(v) if v is not None else None
         hcs_rows.append((fecha, _to_native(sst_prom), _to_native(sst_anom), _to_native(chl_prom), 0.0, _to_native(prod), _to_native(extension)))
@@ -57,8 +66,13 @@ def calcular_hcs():
         logger.info(f"HCS calculado: {len(hcs_rows)} registros")
 
 def calcular_alertas():
-    enos = query("SELECT fecha, nino34 FROM hdo.enos_indicadores ORDER BY fecha DESC LIMIT 1")
-    ph_data = query("SELECT fecha, ph FROM hdo.acidificacion ORDER BY fecha DESC LIMIT 1")
+    # Usar el último valor no-nulo de nino34 (NOAA publica con ~1 mes de retraso)
+    enos = query("""
+        SELECT fecha, nino34 FROM hdo.enos_indicadores
+        WHERE nino34 IS NOT NULL
+        ORDER BY fecha DESC LIMIT 1
+    """)
+    ph_data = query("SELECT fecha, ph FROM hdo.acidificacion WHERE ph IS NOT NULL ORDER BY fecha DESC LIMIT 1")
     cui_data = query("SELECT fecha, cui FROM hdo.surgencia ORDER BY fecha DESC LIMIT 1")
     alertas = []
     if enos:

@@ -1,6 +1,11 @@
 """
 Servicio de descarga de datos Copernicus Marine (CMEMS)
-SST, CHL, SSH, viento, pH, aragonito
+SST, CHL, viento, pH
+Datasets NRT vigentes (catálogo 2026):
+- SST:  METOFFICE-GLO-SST-L4-NRT-OBS-SST-V2 (OSTIA L4 0.05°)
+- Viento: cmems_obs-wind_glo_phy_nrt_l4_0.125deg_PT1H (L4 NRT 0.125°)
+- CHL:  cmems_obs-oc_glo_bgc-plankton_nrt_l3-multi-4km_P1D (GlobColour L3 NRT)
+- BGC:  cmems_mod_glo_bgc-car_anfc_0.25deg_P1D-m (ph, talk, dissic)
 """
 import os
 import xarray as xr
@@ -14,6 +19,18 @@ logger = logging.getLogger(__name__)
 # Configuración regional
 LAT_MIN, LAT_MAX = -56.0, -18.0
 LON_MIN, LON_MAX = -85.0, -65.0
+
+# Datasets CMEMS reales
+DATASET_SST = "METOFFICE-GLO-SST-L4-NRT-OBS-SST-V2"
+DATASET_VIENTO = "cmems_obs-wind_glo_phy_nrt_l4_0.125deg_PT1H"
+DATASET_CHL = "cmems_obs-oc_glo_bgc-plankton_nrt_l3-multi-4km_P1D"
+DATASET_BGC = "cmems_mod_glo_bgc-car_anfc_0.25deg_P1D-m"
+
+# Variables
+VAR_SST = "analysed_sst"
+VAR_U10, VAR_V10 = "eastward_wind", "northward_wind"
+VAR_CHL = "CHL"
+VAR_PH = "ph"
 
 # Directorio de caché
 DATA_DIR = "/Data2/super_sistema/data"
@@ -31,44 +48,35 @@ def get_cmems_client():
 
 def descargar_sst(fecha_inicio, fecha_fin, force=False):
     """
-    Descargar SST diaria desde CMEMS GLO12
-    dataset: cmems_obs-sl_glo_phy-ssh_my_allsat-l4-duacs-0.25deg_P1D
+    Descargar SST diaria desde CMEMS (OSTIA L4 NRT 0.05°)
     """
-    import requests
-    username = os.environ.get("CMEMS_USERNAME", "agarcia5")
-    password = os.environ.get("CMEMS_PASSWORD", "Dream.2004")
-    
     cache_file = os.path.join(NC_CACHE, f"sst_{fecha_inicio.strftime('%Y%m%d')}_{fecha_fin.strftime('%Y%m%d')}.nc")
-    
+
     if os.path.exists(cache_file) and not force:
         logger.info(f"Usando caché: {cache_file}")
         return xr.open_dataset(cache_file)
-    
-    # SST desde CMEMS - producto de análisis
-    dataset_id = "METOFFICE-GLO-SST-L4-REP-OBS-SST"
-    
+
     try:
         subset = get_cmems_client()
         if subset:
-            result = subset(
-                dataset_id=dataset_id,
-                username=username,
-                password=password,
-                variables=["analysed_sst"],
+            subset(
+                dataset_id=DATASET_SST,
+                variables=[VAR_SST],
                 minimum_longitude=LON_MIN,
                 maximum_longitude=LON_MAX,
                 minimum_latitude=LAT_MIN,
                 maximum_latitude=LAT_MAX,
                 start_datetime=fecha_inicio.strftime("%Y-%m-%dT00:00:00"),
                 end_datetime=fecha_fin.strftime("%Y-%m-%dT23:59:59"),
-                output_filename=cache_file,
+                output_filename=os.path.basename(cache_file),
+                output_directory=NC_CACHE,
             )
             ds = xr.open_dataset(cache_file)
         else:
-            # Datos sintéticos para desarrollo
+            # Datos sintéticos para desarrollo (sin copernicusmarine)
             ds = _crear_datos_sinteticos_sst(fecha_inicio, fecha_fin)
             ds.to_netcdf(cache_file)
-        
+
         logger.info(f"SST descargada: {cache_file}")
         return ds
     except Exception as e:
@@ -77,33 +85,29 @@ def descargar_sst(fecha_inicio, fecha_fin, force=False):
 
 def descargar_viento(fecha_inicio, fecha_fin, force=False):
     """
-    Descargar viento (u10, v10) desde CMEMS
-    dataset: cmems_mod_glo_wind_my_0.25deg_PT1H
+    Descargar viento (u10, v10) desde CMEMS (L4 NRT 0.125°)
     """
     cache_file = os.path.join(NC_CACHE, f"viento_{fecha_inicio.strftime('%Y%m%d')}_{fecha_fin.strftime('%Y%m%d')}.nc")
-    
+
     if os.path.exists(cache_file) and not force:
         return xr.open_dataset(cache_file)
-    
-    username = os.environ.get("CMEMS_USERNAME", "agarcia5")
-    password = os.environ.get("CMEMS_PASSWORD", "Dream.2004")
-    dataset_id = "cmems_mod_glo_wind_my_0.25deg_PT1H"
+
     try:
         subset = get_cmems_client()
         if subset:
-            ds = subset(
-                dataset_id=dataset_id,
-                username=username,
-                password=password,
-                variables=["u10", "v10"],
+            subset(
+                dataset_id=DATASET_VIENTO,
+                variables=[VAR_U10, VAR_V10],
                 minimum_longitude=LON_MIN,
                 maximum_longitude=LON_MAX,
                 minimum_latitude=LAT_MIN,
                 maximum_latitude=LAT_MAX,
                 start_datetime=fecha_inicio.strftime("%Y-%m-%dT00:00:00"),
                 end_datetime=fecha_fin.strftime("%Y-%m-%dT23:59:59"),
-                output_filename=cache_file,
+                output_filename=os.path.basename(cache_file),
+                output_directory=NC_CACHE,
             )
+            ds = xr.open_dataset(cache_file)
         else:
             ds = _crear_datos_sinteticos_viento(fecha_inicio, fecha_fin)
             ds.to_netcdf(cache_file)
@@ -113,31 +117,28 @@ def descargar_viento(fecha_inicio, fecha_fin, force=False):
         return _crear_datos_sinteticos_viento(fecha_inicio, fecha_fin)
 
 def descargar_chl(fecha_inicio, fecha_fin, force=False):
-    """Descargar Clorofila-a desde CMEMS"""
-    username = os.environ.get("CMEMS_USERNAME", "agarcia5")
-    password = os.environ.get("CMEMS_PASSWORD", "Dream.2004")
+    """Descargar Clorofila-a desde CMEMS (GlobColour L3 NRT 4km)"""
     cache_file = os.path.join(NC_CACHE, f"chl_{fecha_inicio.strftime('%Y%m%d')}_{fecha_fin.strftime('%Y%m%d')}.nc")
-    
+
     if os.path.exists(cache_file) and not force:
         return xr.open_dataset(cache_file)
-    
-    dataset_id = "cmems_obs-oc_glo_bgc-plankton_my_l4-gapfree-multi-4km_P1D"
+
     try:
         subset = get_cmems_client()
         if subset:
-            ds = subset(
-                dataset_id=dataset_id,
-                username=username,
-                password=password,
-                variables=["CHL"],
+            subset(
+                dataset_id=DATASET_CHL,
+                variables=[VAR_CHL],
                 minimum_longitude=LON_MIN,
                 maximum_longitude=LON_MAX,
                 minimum_latitude=LAT_MIN,
                 maximum_latitude=LAT_MAX,
                 start_datetime=fecha_inicio.strftime("%Y-%m-%dT00:00:00"),
                 end_datetime=fecha_fin.strftime("%Y-%m-%dT23:59:59"),
-                output_filename=cache_file,
+                output_filename=os.path.basename(cache_file),
+                output_directory=NC_CACHE,
             )
+            ds = xr.open_dataset(cache_file)
         else:
             ds = _crear_datos_sinteticos_chl(fecha_inicio, fecha_fin)
             ds.to_netcdf(cache_file)
@@ -146,19 +147,34 @@ def descargar_chl(fecha_inicio, fecha_fin, force=False):
         logger.error(f"Error descargando CHL CMEMS real: {e}, usando sintéticos")
         return _crear_datos_sinteticos_chl(fecha_inicio, fecha_fin)
 
-def descargar_bgc(fecha_inicio, fecha_fin):
+def descargar_bgc(fecha_inicio, fecha_fin, force=False):
     """
-    Descargar biogeoquímicos (pH, aragonito)
-    dataset: cmems_mod_glo_bgc_anfc
+    Descargar biogeoquímicos (pH) desde CMEMS (Global BGC Analysis/Forecast)
     """
     cache_file = os.path.join(NC_CACHE, f"bgc_{fecha_inicio.strftime('%Y%m%d')}_{fecha_fin.strftime('%Y%m%d')}.nc")
-    
-    if os.path.exists(cache_file):
+
+    if os.path.exists(cache_file) and not force:
         return xr.open_dataset(cache_file)
-    
+
     try:
-        ds = _crear_datos_sinteticos_bgc(fecha_inicio, fecha_fin)
-        ds.to_netcdf(cache_file)
+        subset = get_cmems_client()
+        if subset:
+            subset(
+                dataset_id=DATASET_BGC,
+                variables=[VAR_PH],
+                minimum_longitude=LON_MIN,
+                maximum_longitude=LON_MAX,
+                minimum_latitude=LAT_MIN,
+                maximum_latitude=LAT_MAX,
+                start_datetime=fecha_inicio.strftime("%Y-%m-%dT00:00:00"),
+                end_datetime=fecha_fin.strftime("%Y-%m-%dT23:59:59"),
+                output_filename=os.path.basename(cache_file),
+                output_directory=NC_CACHE,
+            )
+            ds = xr.open_dataset(cache_file)
+        else:
+            ds = _crear_datos_sinteticos_bgc(fecha_inicio, fecha_fin)
+            ds.to_netcdf(cache_file)
         return ds
     except Exception as e:
         logger.error(f"Error descargando BGC: {e}")

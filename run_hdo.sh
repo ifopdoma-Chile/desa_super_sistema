@@ -8,4 +8,4 @@ export HDO_DB_USER=postgres
 export HDO_DB_PASS=hdo2026
 export CMEMS_USERNAME=agarcia5
 export CMEMS_PASSWORD=Dream.2004
-exec /usr/bin/gunicorn --workers 5 --worker-class sync --bind 0.0.0.0:8084 --timeout 120 wsgi:app
+exec /Data/anaconda3/envs/sapo2024/bin/gunicorn --workers 5 --worker-class sync --bind 0.0.0.0:8084 --timeout 120 wsgi:app
